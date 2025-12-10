@@ -6,6 +6,10 @@ CSE316 Operating Systems Project | LPU 24252
 """
 
 import sys
+from pathlib import Path
+
+VERSION = (Path(__file__).parent / "VERSION").read_text(encoding="utf-8").strip()
+
 
 # ================================================
 # SAFE IMPORT + ERROR HANDLING
@@ -50,6 +54,7 @@ def print_banner():
 
 if __name__ == '__main__':
     print_banner()
+    print(f" Version: {VERSION}")
     print(" Starting the dashboard...")
     print(" Open your browser and go to: http://127.0.0.1:5000")
     print(" Press Ctrl+C to stop the analyzer.\n")
@@ -61,4 +66,5 @@ if __name__ == '__main__':
         print("\n\nAnalyzer stopped by user. Bye!")
     except Exception as e:
         print(f"\nServer crashed: {e}")
+
 
