@@ -11,6 +11,10 @@ import os
 from datetime import datetime
 import pandas as pd
 from sklearn.ensemble import IsolationForest
+from src.logger import get_logger
+
+logger = get_logger(__name__)
+
 
 # ================================================
 # PATHS
@@ -65,8 +69,10 @@ def detect_anomalies(df: pd.DataFrame):
 
         return anomalies.to_dict("records")[:10]
 
-    except Exception:
+    except Exception as e:
+        logger.exception("Error during anomaly detection")
         return []
+
 
 # ================================================
 # 2. MEMORY LEAK DETECTION (Heuristic)
@@ -125,8 +131,9 @@ def _log_anomalies(anomalies_df: pd.DataFrame):
                     f"{time} | {name} (PID {pid}) | "
                     f"CPU:{cpu}% RAM:{ram:.0f}MB Score:{score}\n"
                 )
-    except Exception:
-        pass
+   except Exception as e:
+    logger.exception("Failed to log anomalies")
+
 
 # ================================================
 # 4. LOAD RECENT ANOMALIES FOR DASH TIMELINE
@@ -149,5 +156,8 @@ def get_recent_anomalies():
                 })
         return data
 
-    except Exception:
-        return []
+   except Exception as e:
+    logger.exception("Failed to read recent anomalies")
+    return []
+
+
