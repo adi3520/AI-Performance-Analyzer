@@ -35,6 +35,7 @@ def detect_anomalies(df: pd.DataFrame):
         'cpu', 'memory_mb', 'threads',
         'disk_read_mb', 'disk_write_mb', 'ctx_switches'
     ]
+    df = df.tail(500)  # only last 500 samples to bound cost
 
     # Ensure all required columns exist
     for col in required_features:
@@ -159,5 +160,6 @@ def get_recent_anomalies():
    except Exception as e:
     logger.exception("Failed to read recent anomalies")
     return []
+
 
 
