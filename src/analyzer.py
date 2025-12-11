@@ -144,6 +144,44 @@ def get_recent_anomalies():
     logger.exception("Failed to read recent anomalies")
     return []
 
+# -------- OPTIMIZATION SUGGESTIONS ENGINE -------- #
+
+def generate_optimization_suggestions(metrics, top_processes):
+    """
+    Provide intelligent optimization suggestions based on system performance.
+    """
+    suggestions = []
+
+    # High CPU usage
+    if metrics["cpu"] > 80:
+        suggestions.append("CPU usage is high — consider closing background apps or optimizing CPU-intensive processes.")
+
+    # Any single process consuming high CPU
+    for proc in top_processes:
+        if proc["cpu"] > 40:
+            suggestions.append(
+                f"Process '{proc['name']}' (PID {proc['pid']}) is consuming {proc['cpu']}% CPU — consider limiting its threads or optimizing code."
+            )
+
+    # Memory usage high
+    if metrics["memory"] > 80:
+        suggestions.append("Memory usage is high — consider freeing unused objects, increasing swap, or upgrading RAM.")
+
+    # Disk I/O heavy
+    if metrics["disk_read"] > 400_000_000 or metrics["disk_write"] > 400_000_000:
+        suggestions.append("Heavy disk usage detected — check for logging loops, backups, or large file operations.")
+
+    # Network heavy
+    if metrics["net_recv"] > 300_000_000 or metrics["net_sent"] > 300_000_000:
+        suggestions.append("High network load — check for sync tools, cloud transfers, or streaming tasks.")
+
+    if not suggestions:
+        suggestions.append("System performance is stable — no optimization required.")
+
+    return suggestions
+
+
+
 
 
 
