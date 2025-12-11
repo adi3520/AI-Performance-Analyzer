@@ -2,7 +2,13 @@
 
 When you click “Draft a new release” on GitHub, paste this into the description box:
 
+
 ## 🚀 AI Performance Analyzer v0.1.0
+
+[![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python&logoColor=white)](https://python.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
+[![Version](https://img.shields.io/github/v/release/shivansh01-24/AI-Performance-Analyzer?label=version&color=orange)](https://github.com/shivansh01-24/AI-Performance-Analyzer/releases)
+[![GitHub Stars](https://img.shields.io/github/stars/shivansh01-24/AI-Performance-Analyzer?style=social)](https://github.com/shivansh01-24/AI-Performance-Analyzer)
 
 ### ✨ Features
 - Real-time system and process performance monitoring
