@@ -25,54 +25,37 @@ os.makedirs("data", exist_ok=True)
 # ================================================
 # 1. AI ANOMALY DETECTION (Isolation Forest)
 # ================================================
-def detect_anomalies(df: pd.DataFrame):
-    """Detect anomalous processes using Isolation Forest"""
+# -------- REAL-TIME BOTTLENECK DETECTION -------- #
 
-    if df is None or df.empty or len(df) < 8:
-        return []
+def detect_bottlenecks(metrics):
+    """
+    Detect CPU, Memory, Disk, and Network bottlenecks using threshold rules.
+    Returns a list of alert messages.
+    """
+    alerts = []
 
-    required_features = [
-        'cpu', 'memory_mb', 'threads',
-        'disk_read_mb', 'disk_write_mb', 'ctx_switches'
-    ]
-    df = df.tail(500)  # only last 500 samples to bound cost
+    # CPU bottleneck
+    if metrics["cpu"] > 85:
+        alerts.append(f"CPU bottleneck detected: {metrics['cpu']:.2f}%")
 
-    # Ensure all required columns exist
-    for col in required_features:
-        if col not in df.columns:
-            df[col] = 0
+    # Memory bottleneck
+    if metrics["memory"] > 85:
+        alerts.append(f"Memory bottleneck detected: {metrics['memory']:.2f}%")
 
-    X = df[required_features].fillna(0).values
-
-    try:
-        model = IsolationForest(
-            n_estimators=100,
-            contamination=0.05,
-            random_state=42,
-            max_samples="auto"
+    # Disk bottleneck
+    if metrics["disk_read"] > 500_000_000 or metrics["disk_write"] > 500_000_000:
+        alerts.append(
+            f"Disk I/O bottleneck detected: Read={metrics['disk_read']}B  Write={metrics['disk_write']}B"
         )
 
-        preds = model.fit_predict(X)  # -1 = anomaly
-        if not (preds == -1).any():
-            return []
+    # Network bottleneck
+    if metrics["net_sent"] > 500_000_000 or metrics["net_recv"] > 500_000_000:
+        alerts.append(
+            f"Network bottleneck detected: Sent={metrics['net_sent']}B  Recv={metrics['net_recv']}B"
+        )
 
-        scores = model.decision_function(X)
+    return alerts
 
-        anomaly_idx = df.index[preds == -1]
-        anomalies = df.loc[anomaly_idx].copy()
-
-        anomalies["score"] = [
-            round(scores[df.index.get_loc(i)], 4) for i in anomalies.index
-        ]
-        anomalies["detected_at"] = datetime.now().strftime("%H:%M:%S")
-
-        _log_anomalies(anomalies)
-
-        return anomalies.to_dict("records")[:10]
-
-    except Exception as e:
-        logger.exception("Error during anomaly detection")
-        return []
 
 
 # ================================================
@@ -160,6 +143,7 @@ def get_recent_anomalies():
    except Exception as e:
     logger.exception("Failed to read recent anomalies")
     return []
+
 
 
 
